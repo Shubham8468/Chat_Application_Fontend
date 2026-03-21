@@ -1,6 +1,4 @@
 import "./App.css";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { connectSocket } from "./lib/socket";
 import { setOnlineUsers } from "./store/slices/authSlice";
 import { Loader } from "lucide-react";
@@ -14,13 +12,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import { Toaster } from "react-hot-toast";
 const App = () => {
   const {isCheckingAuth,authUser}=useSelector((state)=>state.auth);
   const dispatch=useDispatch();
   useEffect(()=>{
     dispatch(getUser());
 
-  },[getUser])
+  },[dispatch])
   useEffect(()=>{
     if(authUser){
       const socket=connectSocket(authUser._id);
@@ -30,7 +29,7 @@ const App = () => {
       return()=>disconnectSocket();
     }
     
-  },[authUser]);
+  },[authUser, dispatch]);
   if(isCheckingAuth && !authUser){
     return (
       <div className="flex items-center justify-center h-screen">
@@ -39,6 +38,7 @@ const App = () => {
     )
   }
   return <>
+  
   <Router>
     <Navbar/>
     <Routes>
@@ -47,7 +47,30 @@ const App = () => {
       <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/"}/>}/>
       <Route path="/profile" element={authUser ? <Profile/> : <Navigate to={"/login"}/>}/>
     </Routes>
-    <ToastContainer/>
+    <Toaster
+      position="top-center"
+      toastOptions={{
+        duration: 3000,
+        style: {
+          background: "var(--bg-tertiary)",
+          color: "var(--text-primary)",
+          border: "1px solid var(--border-color)",
+          borderRadius: "var(--radius-md)",
+          fontFamily: "Inter, sans-serif",
+          fontSize: "0.9rem",
+          borderRadius: "8px",
+          padding: "12px 12px",
+          boxShadow: "10px 10px 10px rgba(20, 9, 60, 0.15)",
+          backgroundcolor:"var(--bg-secondary)",
+        },
+        success: {
+          iconTheme: { primary: "#00d48a", secondary: "#fff" },
+        },
+        error: {
+          iconTheme: { primary: "#ff6b6b", secondary: "#fff" },
+        },
+      }}
+    />
   </Router>
 
 

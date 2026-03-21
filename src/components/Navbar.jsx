@@ -1,6 +1,7 @@
-import { MessageSquare, User } from "lucide-react";
+import { LogOut, MessageSquare, User } from "lucide-react";
 import { useSelector,useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../store/slices/authSlice";
 
 const Navbar = () => {
   const { authUser } = useSelector((state) => state.auth);

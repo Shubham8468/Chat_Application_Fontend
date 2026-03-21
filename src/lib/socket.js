@@ -2,8 +2,9 @@ import {io} from 'socket.io-client'
 let socket=null;
 
 export const connectSocket=(userId)=>{
+    const serverUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4800";
     socket=io(
-        import.meta.env.MODE=== "http://localhost:4800",
+        serverUrl,
         {
             query:{userId} // yahi to backend to pass krenge 
         }
@@ -14,7 +15,7 @@ export const getSocket=()=>socket;
 
 export const disconnectSocket=()=>{
     if(socket){
-        socket.disconnet();
+        socket.disconnect();
         socket=null;
     }
 }
