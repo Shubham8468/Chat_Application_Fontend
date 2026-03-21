@@ -2,7 +2,7 @@ import {io} from 'socket.io-client'
 let socket=null;
 
 export const connectSocket=(userId)=>{
-    const serverUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4800";
+    const serverUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.PROD ? "https://chat-application-backend-rust.vercel.app" : "http://localhost:4800");
     socket=io(
         serverUrl,
         {
