@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { axiosInstance } from '../../lib/axios';
+import { axiosInstance, setAuthToken } from '../../lib/axios';
 import toast from 'react-hot-toast';
 
 import { connectSocket, disconnectSocket } from '../../lib/socket';
@@ -18,6 +18,7 @@ export const getUser=createAsyncThunk("user/me",async(_,thunkAPI)=>{
  export const  logout=createAsyncThunk("user/sign-out",async(_,thunkAPI)=>{
    try{
     await axiosInstance.get("/user/sign-out");
+        setAuthToken(null);
     disconnectSocket();
     toast.success("Logged out successfully")
     return null;
@@ -36,6 +37,15 @@ export const  login=createAsyncThunk("user/sign-in",async (data,thunkAPI)=>{
             throw new Error(res?.data?.message || 'Login failed');
         }
 
+        if (res?.data?.token) {
+            setAuthToken(res.data.token);
+        }
+
+        if (res?.data?.user) {
+            toast.success('Logged in successfully.');
+            return res.data.user;
+        }
+
         const meRes = await axiosInstance.get('/user/me');
         if (!meRes?.data?.user) {
             throw new Error('Unable to load logged-in user');
@@ -50,7 +60,17 @@ export const  login=createAsyncThunk("user/sign-in",async (data,thunkAPI)=>{
 })
 export const signup= createAsyncThunk("/auth/sign-up",async (data,thunkAPI)=>{
     try{
-     await axiosInstance.post("/user/sign-up",data)
+      const res = await axiosInstance.post("/user/sign-up",data)
+      if (res?.data?.token) {
+          setAuthToken(res.data.token);
+      }
+
+      if (res?.data?.user) {
+          connectSocket(res.data.user?._id);
+          toast.success("Account created successfully")
+          return res.data.user;
+      }
+
      const meRes = await axiosInstance.get('/user/me');
      if (!meRes?.data?.user) {
         throw new Error('Unable to load signed-up user');
