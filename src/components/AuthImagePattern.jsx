@@ -2,10 +2,10 @@ const AuthImagePattern = ({ title, subtitle }) => {
   return <>
   <div className="hidden lg:flex item-center jsutify-center p-12 ">
     <div className=" max-w-md text-center mt-20">
-      <div className="grid grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         {
           [...Array(9)].map((_, index) => (
-            <div key={index} className={`aspect-square rounded-2xl bg-blue-400 ${index % 2 === 0 ? 'animate-pulse' : ''}`}></div>
+            <div key={index} className={`aspect-square rounded-3xl bg-blue-400 ${index % 2 === 0 ? 'animate-pulse' : ''}`}></div>
           ))
         }
 

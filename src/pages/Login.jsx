@@ -33,7 +33,7 @@ const Login = () => {
               <MessageSquare className="w-6 h-6 text-blue-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">Welcome Back</h1>
-            <p className="text-gray-500 text-sm mt-2">Sing in to your account</p>
+            <p className="text-gray-500 text-sm mt-2">Sign in to your account</p>
           </div>
 
           {/* FORM   */}
@@ -69,27 +69,27 @@ const Login = () => {
               </div>
             </div>
             <button type="submit" disabled={isLogginIn} // when user click on button to submit form to backend then isLogginIn true ho jayega aur button disable ho jayega taki user dobara click na kr paye jab tk response na aa jaye
-             className="bg-blue-600 hover:bg-blue-300 text-white font-medium py-2 rounded-full w-full transition duration-200 flex justify-center items-center gap-2">
+              className="bg-blue-600 hover:bg-blue-300 text-white font-medium py-2 rounded-full w-full transition duration-200 flex justify-center items-center gap-2">
               {
                 isLogginIn ? (
                   <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Logging In...
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Logging In...
                   </>
 
-                ): (
+                ) : (
                   "Sign In"
                 )
               }
-            
+
             </button>
           </form>
           {/*Footer */}
           <div className="mt-6 text-center">
-            <p onClick={() => {navigate('/register')}} className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer">
-              Don't have an account? 
+            <p onClick={() => { navigate('/register') }} className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer">
+              Don't have an account?
               <span className="text-blue-600 hover:underline ml-1">
-               Register
+                Register
               </span>
             </p>
           </div>
@@ -97,8 +97,11 @@ const Login = () => {
         </div>
       </div>
       {/* Right Side - IMAGE */}
-      <AuthImagePattern title={"Welcome Back!"} subtitle={"Stay connected with your friends, teams, and communities through seamless real-time conversations. Log in to continue where you left off and never miss a moment. "} />
+      <div className="hidden lg:flex item-center jsutify-center p-2  rounded-l-3xl">  
+      <AuthImagePattern title={"Welcome Back!"} subtitle={"Stay connected with your friends, teams, and communities through seamless real-time conversations.  "} />
+        </div>
     </div>
+
   </>;
 };
 

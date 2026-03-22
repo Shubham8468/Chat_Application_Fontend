@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { axiosInstance } from '../../lib/axios';
 import toast from 'react-hot-toast';
 
-import { disconnectSocket } from '../../lib/socket';
+import { connectSocket, disconnectSocket } from '../../lib/socket';
 
 
 export const getUser=createAsyncThunk("user/me",async(_,thunkAPI)=>{
@@ -47,8 +47,43 @@ export const  login=createAsyncThunk("user/sign-in",async (data,thunkAPI)=>{
         toast.error(message);
         return thunkAPI.rejectWithValue(message)
     }
-}
-)
+})
+export const signup= createAsyncThunk("/auth/sign-up",async (data,thunkAPI)=>{
+    try{
+     await axiosInstance.post("/user/sign-up",data)
+     const meRes = await axiosInstance.get('/user/me');
+     if (!meRes?.data?.user) {
+        throw new Error('Unable to load signed-up user');
+     }
+     connectSocket(meRes.data.user?._id);
+
+     toast.success("Account created successfully")
+     return meRes.data.user
+    }catch(error){
+        const message = error?.response?.data?.message || error?.message || "Signup failed";
+        toast.error(message);
+        return thunkAPI.rejectWithValue(message)
+
+    }
+})
+
+export const updateProfile = createAsyncThunk("user/update-profile", async (data, thunkAPI) => {
+    try {
+        const res = await axiosInstance.put("/user/update-profile", data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        toast.success(res?.data?.message || "Profile updated successfully");
+        return res?.data?.user;
+    } catch (error) {
+        const message = error?.response?.data?.message || "Failed to update profile";
+        toast.error(message);
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 
 const authSlice= createSlice({
     name:"auth",
@@ -84,6 +119,20 @@ const authSlice= createSlice({
             state.isLogginIn=false
         }).addCase(login.rejected,(state)=>{
             state.isLogginIn=false;
+        }).addCase(signup.pending,(state)=>{
+            state.isSigningUp=true;
+        }).addCase(signup.fulfilled,(state,action)=>{
+            state.authUser=action.payload;
+            state.isSigningUp=false
+        }).addCase(signup.rejected,(state)=>{
+            state.isSigningUp=false;
+        }).addCase(updateProfile.pending,(state)=>{
+            state.isUpdatingProfile=true;
+        }).addCase(updateProfile.fulfilled,(state,action)=>{
+            state.authUser=action.payload;
+            state.isUpdatingProfile=false;
+        }).addCase(updateProfile.rejected,(state)=>{
+            state.isUpdatingProfile=false;
         })
     }, 
 })
