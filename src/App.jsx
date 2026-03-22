@@ -17,7 +17,7 @@ import { Toaster } from "react-hot-toast";
 const App = () => {
   const {isCheckingAuth,authUser}=useSelector((state)=>state.auth);
   const dispatch=useDispatch();
-  const shouldUseSocket = !import.meta.env.PROD || import.meta.env.VITE_ENABLE_SOCKET === "true";
+  const shouldUseSocket = import.meta.env.VITE_ENABLE_SOCKET === "true" && !import.meta.env.PROD;
   useEffect(()=>{
     dispatch(getUser());
 
