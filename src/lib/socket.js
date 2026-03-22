@@ -6,6 +6,9 @@ export const connectSocket=(userId)=>{
     socket=io(
         serverUrl,
         {
+            withCredentials:true,
+            transports:["websocket","polling"],
+            reconnection:true,
             query:{userId} // yahi to backend to pass krenge 
         }
     );
