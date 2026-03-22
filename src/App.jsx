@@ -5,6 +5,7 @@ import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getUser } from "./store/slices/authSlice";
+import { updatePresence } from "./store/slices/authSlice";
 import { disconnectSocket } from "./lib/socket";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -16,11 +17,25 @@ import { Toaster } from "react-hot-toast";
 const App = () => {
   const {isCheckingAuth,authUser}=useSelector((state)=>state.auth);
   const dispatch=useDispatch();
+  const shouldUseSocket = !import.meta.env.PROD || import.meta.env.VITE_ENABLE_SOCKET === "true";
   useEffect(()=>{
     dispatch(getUser());
 
   },[dispatch])
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    dispatch(updatePresence());
+    const intervalId = setInterval(() => {
+      dispatch(updatePresence());
+    }, 20000);
+
+    return () => clearInterval(intervalId);
+  }, [authUser, dispatch]);
+
   useEffect(()=>{
+    if (!shouldUseSocket) return;
     if(authUser){
       const socket=connectSocket(authUser._id);
       socket.off('getOnlineUsers');
@@ -30,7 +45,7 @@ const App = () => {
       return()=>disconnectSocket();
     }
     
-  },[authUser, dispatch]);
+  },[authUser, dispatch, shouldUseSocket]);
   if(isCheckingAuth && !authUser){
     return (
       <div className="flex items-center justify-center h-screen">

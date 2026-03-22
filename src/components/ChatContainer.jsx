@@ -18,6 +18,16 @@ const ChatContainer = () => {
   }, [dispatch, selectedUser?._id]);
 
   useEffect(() => {
+    if (!selectedUser?._id) return;
+
+    const intervalId = setInterval(() => {
+      dispatch(getMessages(selectedUser._id));
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch, selectedUser?._id]);
+
+  useEffect(() => {
     const socket = getSocket();
     if (!socket || !selectedUser?._id || !authUser?._id) return;
 

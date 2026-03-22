@@ -104,6 +104,15 @@ export const updateProfile = createAsyncThunk("user/update-profile", async (data
     }
 })
 
+export const updatePresence = createAsyncThunk("user/presence", async (_, thunkAPI) => {
+    try {
+        const res = await axiosInstance.put('/user/presence');
+        return res?.data?.lastSeen;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error?.response?.data?.message || 'Presence update failed');
+    }
+})
+
 
 const authSlice= createSlice({
     name:"auth",
@@ -153,6 +162,10 @@ const authSlice= createSlice({
             state.isUpdatingProfile=false;
         }).addCase(updateProfile.rejected,(state)=>{
             state.isUpdatingProfile=false;
+        }).addCase(updatePresence.fulfilled,(state,action)=>{
+            if (state.authUser) {
+                state.authUser.lastSeen = action.payload;
+            }
         })
     }, 
 })

@@ -4,12 +4,15 @@ import { selectedUser as setSelectedUser } from "../store/slices/chatSlice";
 
 const ChatHeader = () => {
   const dispatch = useDispatch();
-  const { selectedUser } = useSelector((state) => state.chat);
+  const { selectedUser, users } = useSelector((state) => state.chat);
   const { onlineUsers } = useSelector((state) => state.auth);
 
   if (!selectedUser) return null;
 
-  const isOnline = onlineUsers?.map((id) => String(id)).includes(String(selectedUser._id));
+  const liveSelectedUser = users?.find((user) => String(user._id) === String(selectedUser._id)) || selectedUser;
+  const socketOnline = onlineUsers?.map((id) => String(id)).includes(String(liveSelectedUser._id));
+  const lastSeen = liveSelectedUser?.lastSeen ? new Date(liveSelectedUser.lastSeen).getTime() : 0;
+  const isOnline = socketOnline || (Boolean(lastSeen) && (Date.now() - lastSeen) < 45000);
 
   return (
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur px-4 py-3 md:px-5">
@@ -17,8 +20,8 @@ const ChatHeader = () => {
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative">
             <img
-              src={selectedUser?.avatar?.url || "/avatar-holder.avif"}
-              alt={selectedUser?.fullName || "chat user"}
+              src={liveSelectedUser?.avatar?.url || "/avatar-holder.avif"}
+              alt={liveSelectedUser?.fullName || "chat user"}
               className="size-10 rounded-2xl object-cover ring-2 ring-white shadow"
             />
             <span
@@ -29,7 +32,7 @@ const ChatHeader = () => {
           </div>
 
           <div className="min-w-0">
-            <h3 className="truncate text-sm md:text-base font-bold text-slate-800">{selectedUser?.fullName}</h3>
+            <h3 className="truncate text-sm md:text-base font-bold text-slate-800">{liveSelectedUser?.fullName}</h3>
             <p className="text-xs text-slate-500">{isOnline ? "Online now" : "Offline"}</p>
           </div>
         </div>

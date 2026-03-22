@@ -17,12 +17,24 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getUsers());
+
+    const intervalId = setInterval(() => {
+      dispatch(getUsers());
+    }, 20000);
+
+    return () => clearInterval(intervalId);
   }, [dispatch]);
 
   const onlineUserIds = new Set((onlineUsers || []).map((id) => String(id)));
+  const isRecentlyOnline = (user) => {
+    const lastSeen = user?.lastSeen ? new Date(user.lastSeen).getTime() : 0;
+    return Boolean(lastSeen) && (Date.now() - lastSeen) < 45000;
+  };
+
+  const isUserOnline = (user) => onlineUserIds.has(String(user?._id)) || isRecentlyOnline(user);
 
   const filteredUsers = showOnlyOnline
-    ? users?.filter((user) => onlineUserIds.has(String(user?._id)))
+    ? users?.filter((user) => isUserOnline(user))
     : users;
 
   if (isUsersLodding) return <SidebarSkeleton />;
@@ -50,7 +62,7 @@ const Sidebar = () => {
         {filteredUsers?.length ? (
           filteredUsers.map((user) => {
             const isActive = selectedUser?._id === user._id;
-            const isOnline = onlineUserIds.has(String(user?._id));
+            const isOnline = isUserOnline(user);
 
             return (
               <button
