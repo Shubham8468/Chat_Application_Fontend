@@ -43,13 +43,17 @@ export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ reciver
             formData.append('text', text.trim());
         }
         if (media) {
+            console.log("Appending media to FormData:", { name: media.name, size: media.size, type: media.type });
             formData.append('media', media);
         }
 
+        console.log("Sending message to:", `/message/send/${reciverId}`);
         const res = await axiosInstance.post(`/message/send/${reciverId}`, formData);
 
+        console.log("Message sent successfully:", res.data);
         return res.data;
     } catch (error) {
+        console.error("Failed to send message:", error);
         const message = error?.response?.data?.message || 'Failed to send message';
         toast.error(message);
         return thunkAPI.rejectWithValue(message);

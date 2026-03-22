@@ -159,9 +159,7 @@ const authSlice= createSlice({
         }).addCase(updateProfile.rejected,(state)=>{
             state.isUpdatingProfile=false;
         }).addCase(updatePresence.fulfilled,(state,action)=>{
-            if (state.authUser) {
-                state.authUser.lastSeen = action.payload;
-            }
+            // Don't update UI on presence heartbeat - just keeping backend in sync
         })
     }, 
 })

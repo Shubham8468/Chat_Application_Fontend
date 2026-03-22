@@ -21,7 +21,7 @@ const App = () => {
   useEffect(()=>{
     dispatch(getUser());
 
-  },[dispatch])
+  },[]) // Only run once on mount, not on dispatch changes
 
   useEffect(() => {
     if (!authUser) return;
