@@ -89,11 +89,7 @@ export const signup= createAsyncThunk("/auth/sign-up",async (data,thunkAPI)=>{
 
 export const updateProfile = createAsyncThunk("user/update-profile", async (data, thunkAPI) => {
     try {
-        const res = await axiosInstance.put("/user/update-profile", data, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const res = await axiosInstance.put("/user/update-profile", data);
 
         toast.success(res?.data?.message || "Profile updated successfully");
         return res?.data?.user;
