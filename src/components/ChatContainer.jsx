@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
-import { getMessages, pushNewMessage } from "../store/slices/chatSlice";
+import { getMessages, pollMessages, pushNewMessage } from "../store/slices/chatSlice";
 import { getSocket } from "../lib/socket";
 
 const ChatContainer = () => {
@@ -21,8 +21,8 @@ const ChatContainer = () => {
     if (!selectedUser?._id || !import.meta.env.PROD) return;
 
     const intervalId = setInterval(() => {
-      dispatch(getMessages(selectedUser._id));
-    }, 8000);
+      dispatch(pollMessages(selectedUser._id));
+    }, 2500);
 
     return () => clearInterval(intervalId);
   }, [dispatch, selectedUser?._id]);

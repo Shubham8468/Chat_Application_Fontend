@@ -27,6 +27,15 @@ export const getMessages = createAsyncThunk('chat/getMessages', async (reciverId
     }
 })
 
+export const pollMessages = createAsyncThunk('chat/pollMessages', async (reciverId, thunkAPI) => {
+    try {
+        const res = await axiosInstance.get(`/message/${reciverId}`);
+        return res?.data?.messages || [];
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data?.messages);
+    }
+})
+
 export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ reciverId, text, media }, thunkAPI) => {
     try {
         const formData = new FormData();
@@ -85,6 +94,9 @@ const chatSlice =createSlice ({
             state.isMessageLoading = false;
         }).addCase(getMessages.rejected, (state) => {
             state.isMessageLoading = false;
+        }).addCase(pollMessages.fulfilled, (state, action) => {
+            state.messages = action.payload;
+        }).addCase(pollMessages.rejected, (state) => {
         }).addCase(sendMessage.pending, (state) => {
             state.isSendingMessage = true;
         }).addCase(sendMessage.fulfilled, (state, action) => {
