@@ -18,11 +18,11 @@ const ChatContainer = () => {
   }, [dispatch, selectedUser?._id]);
 
   useEffect(() => {
-    if (!selectedUser?._id) return;
+    if (!selectedUser?._id || !import.meta.env.PROD) return;
 
     const intervalId = setInterval(() => {
       dispatch(getMessages(selectedUser._id));
-    }, 3000);
+    }, 8000);
 
     return () => clearInterval(intervalId);
   }, [dispatch, selectedUser?._id]);
